@@ -1,9 +1,24 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Task } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export function UseTask() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const saved = localStorage.getItem('tasks');
+    if (saved) {
+      try {
+        return JSON.parse(saved) as Task[];
+      } catch (error) {
+        console.error('invalid tasks in localStorage', error);
+        return [];
+      }
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
   const [newTaskName, setNewTaskName] = useState('');
 
   // Add a task
