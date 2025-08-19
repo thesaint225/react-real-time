@@ -1,28 +1,50 @@
-// Import the global CSS styles for the app.
+import { useState } from 'react';
 import './App.css';
 
-// Import the TaskList component, which is responsible for displaying tasks.
 import TaskList from './components/TaskList';
-
-// Import the Task type definition (for type checking only, not included in compiled JS).
-import type { Task } from './types/types';
+import { UseTask } from './hooks/UseTask';
 
 function App() {
-  // Declare an array of tasks, each with a name (string) and a status (boolean).
-  // The Task[] type ensures every object in this array matches the Task type definition.
-  const tasks: Task[] = [
-    { name: 'Design homepage', status: true }, // Task 1 - completed
-    { name: 'Fix login bug', status: false }, // Task 2 - not completed
-    { name: 'Write tests', status: false }, // Task 3 - not completed
-  ];
+  const {
+    tasks,
+    newTaskName,
+    setNewTaskName,
+    addTask,
+    toggleTaskStatus,
+    deleteTask,
+  } = UseTask();
+  const [filter, setFilter] = useState<'all' | 'completed' | 'pending'>('all');
+
+  // Apply filter to tasks
+  const filterTasks = tasks.filter((task) => {
+    if (filter === 'completed') return task.status === true;
+    if (filter === 'pending') return task.status === false;
+    return true;
+  });
 
   return (
     <>
-      {/* Render the TaskList component and pass the tasks array as a prop */}
-      <TaskList tasks={tasks} />
+      <input
+        type='text'
+        value={newTaskName}
+        onChange={(e) => setNewTaskName(e.target.value)}
+        placeholder='Enter task name'
+      />
+
+      <button onClick={addTask}>+</button>
+      <div>
+        <button onClick={() => setFilter('all')}>All</button>
+        <button onClick={() => setFilter('completed')}>Completed</button>
+        <button onClick={() => setFilter('pending')}>pending</button>
+      </div>
+
+      <TaskList
+        tasks={filterTasks}
+        onToggle={toggleTaskStatus}
+        onDelete={deleteTask}
+      />
     </>
   );
 }
 
-// Export the App component so it can be used as the root component in main.tsx.
 export default App;

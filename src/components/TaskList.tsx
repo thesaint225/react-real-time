@@ -1,17 +1,17 @@
-// Import only the type 'TaskProps' from the '../types/types' file.
-// 'import type' ensures this import exists only in TypeScript for type checking
-// and is removed from the compiled JavaScript output.
-import type { TaskProps } from '../types/types';
 import TaskItem from './TaskItem';
+import type { TaskListProps } from '../types/types';
 
-// Export a default React functional component named 'TaskList'.
-// This component takes a single prop called 'tasks', whose shape is defined by 'TaskProps'.
-export default function TaskList({ tasks }: TaskProps) {
-  // Return the JSX to render
+export default function TaskList({ tasks, onToggle, onDelete }: TaskListProps) {
   return (
     <div>
-      {tasks.map((task, index) => (
-        <TaskItem key={index} name={task.name} status={task.status} />
+      {tasks.map((task) => (
+        <TaskItem
+          key={task.id}
+          name={task.name}
+          status={task.status}
+          onToggle={() => onToggle(task.id)}
+          onDelete={() => onDelete(task.id)}
+        />
       ))}
     </div>
   );

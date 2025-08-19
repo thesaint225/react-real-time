@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { Task } from '../types/types';
+import { v4 as uuidv4 } from 'uuid';
 
-export default function UseTask() {
+export function UseTask() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskName, setNewTaskName] = useState('');
 
@@ -11,6 +12,7 @@ export default function UseTask() {
 
     // Create a new task object
     const newTask: Task = {
+      id: uuidv4(),
       name: newTaskName,
       status: false, //default to incomplete
     };
@@ -19,10 +21,27 @@ export default function UseTask() {
     // clear the input
     setNewTaskName('');
   };
+
+  // Toggle task completion by id
+
+  const toggleTaskStatus = (taskId: string) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, status: !task.status } : task
+      )
+    );
+  };
+
+  const deleteTask = (taskId: string) => {
+    setTasks((prevTask) => prevTask.filter((task) => task.id !== taskId));
+  };
+
   return {
     tasks,
     newTaskName,
     setNewTaskName,
     addTask,
+    toggleTaskStatus,
+    deleteTask,
   };
 }
